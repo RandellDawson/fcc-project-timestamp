@@ -1,3 +1,4 @@
+const dotenv = require('dotenv').config();
 const express = require('express');
 const app = express();
 // enable CORS (https://en.wikipedia.org/wiki/Cross-origin_resource_sharing)
@@ -12,11 +13,14 @@ app.get("/", function (req, res) {
   res.sendFile(__dirname + '/views/index.html');
 });
 
-// your first API endpoint... 
-app.get("/api/hello", function (req, res) {
-  res.json({greeting: 'hello API'});
+app.get("/api/:date", (req, res) => {
+  const submittedDate = req.params.date;
+  console.log(submittedDate);
+  const date = submittedDate ? new Date(submittedDate) : new Date();
+  console.log(date);
+  res.json({date});
 });
 
-const listener = app.listen(process.env.PORT, function () {
+const listener = app.listen(process.env.PORT, () => {
   console.log('App is listening on port ' + listener.address().port);
 });
