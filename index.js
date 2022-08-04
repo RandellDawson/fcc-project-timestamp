@@ -13,29 +13,27 @@ const returnDates = (res, date) => {
   res.json({ unix: date.getTime(), utc: date.toUTCString() });
 };
 
+const isValidDate = (date) => date.toString() !== "Invalid Date";
+
 app.get("/", function (req, res) {
   res.sendFile(__dirname + '/views/index.html');
 });
 
 app.get("/api", (_, res) => {
-  returnDates(res, new Date(Date.now()));
+  returnDates(res, new Date(Date.now())); // returns current date/time when no date passed
 });
 
 app.get("/api/:date", (req, res) => {
   const submittedDate = req.params.date;
   let date = new Date(submittedDate);
-  if (date.toString() === "Invalid Date") {
-    date = new Date(Number(submittedDate)); // assumes date input is in milliseconds
-    if (date.toString() === "Invalid Date") {
-      res.json({ error: "Invalid Date" });
-    }
-    else {
-      returnDates(res, date);
-    }
+  if (!isValidDate(date)) {
+    /* Assume date input might be in milliseconds */
+    date = new Date(Number(submittedDate));
+    return isValidDate(date)
+      ? returnDates(res, date)
+      : res.json({ error: "Invalid Date" });
   }
-  else {
-    returnDates(res, date);
-  }
+  returnDates(res, date);
 });
 
 const listener = app.listen(process.env.PORT, () => {
