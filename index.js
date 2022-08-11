@@ -19,13 +19,9 @@ app.get("/", function (req, res) {
   res.sendFile(__dirname + '/views/index.html');
 });
 
-app.get("/api", (_, res) => {
-  returnDates(res, new Date(Date.now())); // returns current date/time when no date passed
-});
-
-app.get("/api/:date", (req, res) => {
+app.get("/api/:date?", (req, res) => {
   const submittedDate = req.params.date;
-  let date = new Date(submittedDate);
+  let date = submittedDate ? new Date(submittedDate) : new Date();
   if (!isValidDate(date)) {
     /* Assume date input might be in milliseconds */
     date = new Date(Number(submittedDate));
